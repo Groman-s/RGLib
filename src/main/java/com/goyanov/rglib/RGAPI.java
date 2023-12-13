@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class RGAPI
@@ -25,6 +26,13 @@ public class RGAPI
     {
         long time = Bukkit.getWorlds().get(0).getTime();
         return time >= 13000 && time <= 23000;
+    }
+
+    public static Player getRandomPlayer()
+    {
+        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+        if (players.size() == 0) return null;
+        return (Player) players.toArray()[(int)(Math.random()*players.size())];
     }
 
     public static String formatWithColors(String msg)
