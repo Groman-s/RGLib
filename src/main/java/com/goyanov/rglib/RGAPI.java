@@ -1,5 +1,6 @@
 package com.goyanov.rglib;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
@@ -14,12 +15,19 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RGAPI
 {
     public static class Constants
     {
         public static final Vector STAND_VELOCITY = new Vector(0, -0.0784000015258789, 0);
+    }
+
+    public static double roundDoubleValue(double value, int signsAfterDots) // округление до signsAfterDots знаков после запятой (10^signsAfterDots)
+    {
+        return Math.round(value * Math.pow(10, signsAfterDots)) / Math.pow(10, signsAfterDots);
     }
 
     public static boolean isNight()
@@ -38,6 +46,20 @@ public class RGAPI
     public static String formatWithColors(String msg)
     {
         return msg.replace("&", "§");
+    }
+
+    public static String getColoredMessage(String message)
+    {
+        message = message.replace("&", "§");
+        Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+
+        for(Matcher matcher = pattern.matcher(message); matcher.find(); matcher = pattern.matcher(message))
+        {
+            String color = message.substring(matcher.start(), matcher.end());
+            message = message.replace(color, ChatColor.of(color) + "");
+        }
+
+        return message;
     }
 
     public static void playLoudSound(Player p, Sound sound, int volumeMultiply, float pitch)
