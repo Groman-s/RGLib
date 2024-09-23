@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RGAPI
+public class RGLib
 {
     public static class Constants
     {
@@ -27,7 +27,8 @@ public class RGAPI
 
     public static double roundDoubleValue(double value, int signsAfterDots) // округление до signsAfterDots знаков после запятой (10^signsAfterDots)
     {
-        return Math.round(value * Math.pow(10, signsAfterDots)) / Math.pow(10, signsAfterDots);
+        double coef = Math.pow(10, signsAfterDots);
+        return Math.round(value * coef) / coef;
     }
 
     public static boolean isNight()
