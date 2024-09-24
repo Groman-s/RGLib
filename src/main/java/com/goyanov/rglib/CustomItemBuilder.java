@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CustomItemBuilder
 {
@@ -45,5 +46,11 @@ public class CustomItemBuilder
     {
         item.setItemMeta(meta);
         return item;
+    }
+
+    public CustomItemBuilder withCustomMeta(Consumer<ItemMeta> metaConsumer)
+    {
+        metaConsumer.accept(meta);
+        return this;
     }
 }
