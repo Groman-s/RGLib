@@ -27,8 +27,12 @@ public class RGLib
 
     public static double roundDoubleValue(double value, int signsAfterDots) // округление до signsAfterDots знаков после запятой (10^signsAfterDots)
     {
-        double coef = Math.pow(10, signsAfterDots);
-        return Math.round(value * coef) / coef;
+        long coef = 1;
+        for (int i = 0; i < signsAfterDots; i++)
+        {
+            coef *= 10;
+        }
+        return Math.round(value * coef) / (double) coef;
     }
 
     public static boolean isNight()
@@ -44,7 +48,7 @@ public class RGLib
         return (Player) players.toArray()[(int)(Math.random()*players.size())];
     }
 
-    public static String formatWithColors(String msg)
+    public static String formatWithSimpleColors(String msg)
     {
         return msg.replace("&", "§");
     }
@@ -97,12 +101,12 @@ public class RGLib
         }
     }
 
-    public static void sendActionBarMessage(Player p, String msg)// ОТПРАВИТЬ ИГРОКУ СООБЩЕНИЕ В ACTIONBAR
+    public static void sendActionBarMessage(Player p, String msg) // ОТПРАВИТЬ ИГРОКУ СООБЩЕНИЕ В ACTIONBAR
     {
         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder(msg).create());
     }
 
-    public static boolean isPlayerLookingAtEntity(Player p, Entity ent, float delta)// ЕСЛИ ИГРОК СМОТРИТ НА СУЩНОСТЬ
+    public static boolean isPlayerLookingAtEntity(Player p, Entity ent, float delta) // ЕСЛИ ИГРОК СМОТРИТ НА СУЩНОСТЬ
     {
         Vector who = p.getLocation().getDirection().normalize();
         who.setY(0);
@@ -114,7 +118,7 @@ public class RGLib
         return false;
     }
 
-    public static void moveEntityInDirectionOfEntity(Entity from, Entity to, double speed)// ДВИГАЕМ СУЩНОСТЬ В СТОРОНУ ДРУГОЙ СУЩНОСТИ С ЗАДАННОЙ СКОРОСТЬЮ
+    public static void moveEntityInDirectionOfEntity(Entity from, Entity to, double speed) // ДВИГАЕМ СУЩНОСТЬ В СТОРОНУ ДРУГОЙ СУЩНОСТИ С ЗАДАННОЙ СКОРОСТЬЮ
     {
         Location fromL = from.getLocation();
         Location toL = to.getLocation();
@@ -136,7 +140,7 @@ public class RGLib
         who.teleport(from);
     }
 
-    public static Location getLocationInFrontOfEntity(Entity ent, float distance)// ПОЛУЧАЕМ ЛОКАЦИЮ ПРЯМО ПЕРЕД (ЗА) СУЩНОСТЬЮ В НЕСКОЛЬКИХ БЛОКАХ
+    public static Location getLocationInFrontOfEntity(Entity ent, float distance) // ПОЛУЧАЕМ ЛОКАЦИЮ ПРЯМО ПЕРЕД (ЗА) СУЩНОСТЬЮ В НЕСКОЛЬКИХ БЛОКАХ
     {
         Location pLoc = ent.getLocation();
         pLoc.setPitch(0);
