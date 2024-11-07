@@ -2,16 +2,18 @@ package com.goyanov.rglib;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class CustomConfig
 {
-    private JavaPlugin plugin;
-    private File file;
-    private FileConfiguration config;
+    private final JavaPlugin plugin;
+    private final File file;
+    private final FileConfiguration config;
 
     public CustomConfig(String configName, boolean fromJar, JavaPlugin plugin)
     {
@@ -28,9 +30,7 @@ public class CustomConfig
             }
             else
             {
-                try {
-                    this.file.createNewFile();
-                } catch (IOException e) { e.printStackTrace(); }
+                try { this.file.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
             }
         }
         config = YamlConfiguration.loadConfiguration(file);
@@ -41,25 +41,15 @@ public class CustomConfig
         plugin.getDataFolder().mkdir();
         if (!file.exists())
         {
-            try {
-                file.createNewFile();
-            } catch (IOException e) { e.printStackTrace(); }
+            try { file.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
         }
-        try {
-            config.save(file);
-        } catch (IOException e) { e.printStackTrace(); }
+        try { config.save(file); } catch (IOException e) { e.printStackTrace(); }
     }
 
     public void save(boolean onlyIfExists)
     {
         if (onlyIfExists && !file.exists()) return;
         save();
-    }
-
-    public void saveAsync(boolean onlyIfExists)
-    {
-        if (onlyIfExists && !file.exists()) return;
-        new Thread(this::save).start();
     }
 
     public File getFile()
@@ -70,5 +60,19 @@ public class CustomConfig
     public FileConfiguration getConfig()
     {
         return config;
+    }
+
+    public String getColoredConfigString(String configKey)
+    {
+        String message = getConfig().getString(configKey);
+        if (message != null) message = RGLib.getColoredMessage(message);
+        return message;
+    }
+
+    public List<String> getColoredConfigStringList(String configKey)
+    {
+        List<String> messages = getConfig().getStringList(configKey);
+        messages.replaceAll(RGLib::getColoredMessage);
+        return messages;
     }
 }
