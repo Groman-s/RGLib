@@ -20,7 +20,7 @@ public class ConfigManager
         if (!config.getConfig().contains(key))
         {
             config.getConfig().set(key, value);
-            config.save(true);
+            config.save();
         }
     }
 
@@ -31,9 +31,9 @@ public class ConfigManager
             if (!config.getConfig().contains(entry.getKey()))
             {
                 config.getConfig().set(entry.getKey(), entry.getValue());
-                config.save(true);
+                config.save();
             }
         }
-        config.save(true);
+        config.save();
     }
 }
