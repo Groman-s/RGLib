@@ -3,18 +3,14 @@ package com.goyanov.rglib;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +40,7 @@ public class RGLib
     public static Player getRandomPlayer()
     {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        if (players.size() == 0) return null;
+        if (players.isEmpty()) return null;
         return (Player) players.toArray()[(int)(Math.random()*players.size())];
     }
 
@@ -58,7 +54,7 @@ public class RGLib
         message = message.replace("&", "§");
         Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
 
-        for(Matcher matcher = pattern.matcher(message); matcher.find(); matcher = pattern.matcher(message))
+        for (Matcher matcher = pattern.matcher(message); matcher.find(); matcher = pattern.matcher(message))
         {
             String color = message.substring(matcher.start(), matcher.end());
             message = message.replace(color, ChatColor.of(color) + "");
@@ -113,9 +109,7 @@ public class RGLib
         Vector atWho = ent.getLocation().getDirection().normalize();
         atWho.setY(0);
 
-        if (who.add(atWho).length() < delta) return true;
-
-        return false;
+        return who.add(atWho).length() < delta;
     }
 
     public static void moveEntityInDirectionOfEntity(Entity from, Entity to, double speed) // ДВИГАЕМ СУЩНОСТЬ В СТОРОНУ ДРУГОЙ СУЩНОСТИ С ЗАДАННОЙ СКОРОСТЬЮ
@@ -152,52 +146,76 @@ public class RGLib
 
     public static List<Block> getNearbyBlocks(Player p, int x, int y, int z)
     {
-        List<Block> list = new ArrayList<>();
+        LinkedList<Block> list = new LinkedList<>();
         Location loc = p.getLocation();
         World w = loc.getWorld();
 
         for (int i = -x; i <= x; i++)
             for (int j = -y; j <= y; j++)
                 for (int k = -z; k <= z; k++)
-                {
-                    list.add(w.getBlockAt(loc.clone().add(i,j,k)));
-                }
+                    list.addFirst(w.getBlockAt(loc.clone().add(i,j,k)));
 
         return list;
     }
 
-    public static Location getTheNearestEmptyLocation(Location loc)
+    @SafeVarargs
+    public static <T> T randomOf(T... objects)
     {
-        boolean findLower = false;
-        Location lon = loc.clone().add(0, -1, 0);
-        lon.setY((int)lon.getY());
+        if (objects.length == 0) return null;
+        return objects[(int) (Math.random() * objects.length)];
+    }
 
-        Block m1,m2;
+    @SafeVarargs
+    public static <T> T randomOf(ProbableObject<T>... probableObjects)
+    {
+        double commonProb = Arrays.stream(probableObjects).mapToDouble(ProbableObject::getProbability).sum();
+        double random = Math.random() * commonProb;
 
-        if(!lon.getBlock().getType().isSolid() && !lon.getBlock().getType().toString().contains("WATER"))
+        double currentUp = probableObjects[0].getProbability();
+        for (int i = 0; i < probableObjects.length; i++)
         {
-            findLower = true;
+            ProbableObject<T> objAndProb = probableObjects[i];
+            if (random < currentUp) return objAndProb.getObject();
+            else currentUp += probableObjects[i + 1].getProbability();
         }
 
-        if (findLower)
-        {
-            do
-            {
-                m1 = lon.add(0, -1, 0).getBlock();
-            }
-            while (!m1.getType().isSolid() && lon.getY() > 0);
-            lon.add(0, 1, 0);
-        }
-        else
-        {
-            do
-            {
-                m1 = lon.getBlock();
-                m2 = lon.add(0, 1, 0).getBlock();
-            }
-            while ((m1.getType().isSolid() || m1.getType().toString().contains("WATER")) && (m2.getType().isSolid() || m2.getType().toString().contains("WATER")));
-        }
+        return null;
+    }
 
-        return lon;
+    public static boolean locationIsSafe(Location location)
+    {
+        location = location.clone();
+        return  (location.add(0,-1,0).getBlock().getType().isSolid() || location.getBlock().getType() == Material.WATER) &&
+                !location.add(0,1,0).getBlock().getType().isSolid() && location.getBlock().getType() != Material.WATER &&
+                !location.add(0,1,0).getBlock().getType().isSolid() && location.getBlock().getType() != Material.WATER ;
+    }
+
+    public static Location findNearestSafeLocation(Location location)
+    {
+        if (locationIsSafe(location)) return location;
+
+        Location foundSafeLoc = location.clone();
+
+        boolean searchUpper =
+                foundSafeLoc.getBlock().getType().isSolid() ||
+                foundSafeLoc.getBlock().getType() == Material.WATER ||
+                foundSafeLoc.clone().add(0,1,0).getBlock().getType().isSolid() ||
+                foundSafeLoc.clone().add(0,1,0).getBlock().getType() == Material.WATER;
+
+        World world = location.getWorld();
+
+        int yAdd = searchUpper ? 1 : -1;
+        Predicate<Location> conditionToStop = (loc) -> searchUpper ? loc.getY() >= world.getMaxHeight() : loc.getY() <= world.getMinHeight();
+
+        do
+        {
+            foundSafeLoc.add(0,yAdd,0);
+            if (conditionToStop.test(foundSafeLoc)) return location;
+        }
+        while (!locationIsSafe(foundSafeLoc));
+
+        foundSafeLoc.setY((int) foundSafeLoc.getY());
+
+        return foundSafeLoc;
     }
 }
