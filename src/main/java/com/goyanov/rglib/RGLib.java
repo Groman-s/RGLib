@@ -146,14 +146,14 @@ public class RGLib
 
     public static List<Block> getNearbyBlocks(Player p, int x, int y, int z)
     {
-        LinkedList<Block> list = new LinkedList<>();
+        List<Block> list = new ArrayList<>(2*x + 2*y + 2*z);
         Location loc = p.getLocation();
         World w = loc.getWorld();
 
         for (int i = -x; i <= x; i++)
             for (int j = -y; j <= y; j++)
                 for (int k = -z; k <= z; k++)
-                    list.addFirst(w.getBlockAt(loc.clone().add(i,j,k)));
+                    list.add(w.getBlockAt(loc.clone().add(i,j,k)));
 
         return list;
     }
