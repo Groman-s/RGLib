@@ -3,7 +3,9 @@ package com.goyanov.rglib;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -21,6 +23,14 @@ public class CustomItemBuilder
     public CustomItemBuilder withCustomModelData(int modelData)
     {
         meta.setCustomModelData(modelData);
+        return this;
+    }
+
+    public CustomItemBuilder withCustomModelData(String modelData)
+    {
+        CustomModelDataComponent component = meta.getCustomModelDataComponent();
+        component.setStrings(List.of(modelData));
+        meta.setCustomModelDataComponent(component);
         return this;
     }
 
