@@ -6,7 +6,7 @@
 
     <groupId>com.goyanov</groupId>
     <artifactId>RGLib</artifactId>
-    <version>1.12</version>
+    <version>1.13</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

@@ -58,8 +58,16 @@ public class CustomItemBuilder
         return item;
     }
 
-    public CustomItemBuilder withCustomMeta(Consumer<ItemMeta> metaConsumer)
+    public CustomItemBuilder addLoreLine(String line)
     {
+        if (meta.getLore() == null) meta.setLore(new ArrayList<>());
+        meta.getLore().add(line);
+        return this;
+    }
+
+    public CustomItemBuilder editMeta(Consumer<ItemMeta> metaConsumer)
+    {
+        if (metaConsumer == null) return this;
         metaConsumer.accept(meta);
         return this;
     }
