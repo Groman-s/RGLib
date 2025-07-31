@@ -60,8 +60,10 @@ public class CustomItemBuilder
 
     public CustomItemBuilder addLoreLine(String line)
     {
-        if (meta.getLore() == null) meta.setLore(new ArrayList<>());
-        meta.getLore().add(line);
+        List<String> lore = meta.getLore();
+        if (lore == null) lore = new ArrayList<>();
+        lore.add(line);
+        meta.setLore(lore);
         return this;
     }
 
