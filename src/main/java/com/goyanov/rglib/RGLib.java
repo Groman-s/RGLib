@@ -46,11 +46,14 @@ public class RGLib
 
     public static String formatWithSimpleColors(String msg)
     {
+        if (msg == null) return null;
         return msg.replace("&", "§");
     }
 
     public static String getColoredMessage(String message)
     {
+        if (message == null) return null;
+
         message = message.replace("&", "§");
         Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
 

@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 public class CustomConfig
@@ -17,6 +18,8 @@ public class CustomConfig
 
     private File file;
     private FileConfiguration config;
+    private HashMap<String, String> cachedColoredStrings;
+    private HashMap<String, List<String>> cachedColoredStringLists;
 
     public CustomConfig(String configName, boolean fromJar, JavaPlugin plugin)
     {
@@ -69,15 +72,33 @@ public class CustomConfig
 
     public String getColoredConfigString(String configKey)
     {
-        String message = getConfig().getString(configKey);
-        if (message != null) message = RGLib.getColoredMessage(message);
-        return message;
+        if (cachedColoredStrings == null) cachedColoredStrings = new HashMap<>();
+
+        String coloredString = cachedColoredStrings.get(configKey);
+
+        if (coloredString == null)
+        {
+            coloredString = RGLib.getColoredMessage(config.getString(configKey));
+            if (coloredString == null) return null;
+            cachedColoredStrings.put(configKey, coloredString);
+        }
+
+        return coloredString;
     }
 
     public List<String> getColoredConfigStringList(String configKey)
     {
-        List<String> messages = getConfig().getStringList(configKey);
-        messages.replaceAll(RGLib::getColoredMessage);
-        return messages;
+        if (cachedColoredStringLists == null) cachedColoredStringLists = new HashMap<>();
+
+        List<String> coloredStringList = cachedColoredStringLists.get(configKey);
+
+        if (coloredStringList == null)
+        {
+            coloredStringList = getConfig().getStringList(configKey);
+            coloredStringList.replaceAll(RGLib::getColoredMessage);
+            cachedColoredStringLists.put(configKey, coloredStringList);
+        }
+
+        return coloredStringList;
     }
 }
