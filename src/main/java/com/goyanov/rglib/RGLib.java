@@ -60,6 +60,13 @@ public class RGLib
         return msg.replace("&", "§");
     }
 
+    public static List<String> formatWithSimpleColors(List<String> list)
+    {
+        if (list == null) return null;
+        list.replaceAll(RGLib::formatWithSimpleColors);
+        return list;
+    }
+
     public static String getColoredMessage(String message)
     {
         if (message == null) return null;
@@ -74,6 +81,13 @@ public class RGLib
         }
 
         return message;
+    }
+
+    public static List<String> getColoredStringList(List<String> list)
+    {
+        if (list == null) return null;
+        list.replaceAll(RGLib::getColoredMessage);
+        return list;
     }
 
     public static void playLoudSound(Player p, Sound sound, int volumeMultiply, float pitch)
