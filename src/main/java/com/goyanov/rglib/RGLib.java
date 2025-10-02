@@ -24,11 +24,12 @@ public class RGLib
         public static final Vector STAND_VELOCITY = new Vector(0, -0.0784000015258789, 0);
     }
 
-    public static void editMeta(ItemStack item, Consumer<ItemMeta> metaConsumer)
+    public static ItemStack editMeta(ItemStack item, Consumer<ItemMeta> metaConsumer)
     {
         ItemMeta meta = item.getItemMeta();
         metaConsumer.accept(meta);
         item.setItemMeta(meta);
+        return item;
     }
 
     public static double roundDoubleValue(double value, int signsAfterDots) // округление до signsAfterDots знаков после запятой (10^signsAfterDots)
