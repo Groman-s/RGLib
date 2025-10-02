@@ -31,7 +31,6 @@ public class ConfigManager
             if (!config.getConfig().contains(entry.getKey()))
             {
                 config.getConfig().set(entry.getKey(), entry.getValue());
-                config.save();
             }
         }
         config.save();

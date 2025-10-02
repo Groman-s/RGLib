@@ -7,9 +7,12 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +22,13 @@ public class RGLib
     public static class Constants
     {
         public static final Vector STAND_VELOCITY = new Vector(0, -0.0784000015258789, 0);
+    }
+
+    public static void editMeta(ItemStack item, Consumer<ItemMeta> metaConsumer)
+    {
+        ItemMeta meta = item.getItemMeta();
+        metaConsumer.accept(meta);
+        item.setItemMeta(meta);
     }
 
     public static double roundDoubleValue(double value, int signsAfterDots) // округление до signsAfterDots знаков после запятой (10^signsAfterDots)
