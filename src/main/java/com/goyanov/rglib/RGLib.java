@@ -32,6 +32,24 @@ public class RGLib
         return item;
     }
 
+    public static ItemStack editLore(ItemStack item, Consumer<List<String>> loreConsumer)
+    {
+        if (item.getItemMeta() == null) return item;
+
+        ItemMeta meta = item.getItemMeta();
+
+        List<String> lore = meta.getLore();
+        if (lore == null) lore = new ArrayList<>();
+
+        loreConsumer.accept(lore);
+
+        if (lore.isEmpty()) lore = null;
+
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
     public static double roundDoubleValue(double value, int signsAfterDots) // округление до signsAfterDots знаков после запятой (10^signsAfterDots)
     {
         long coef = 1;
